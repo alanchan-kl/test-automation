@@ -1,0 +1,4 @@
+com/test/global/stepdef/ExampleSteps.class
+com/test/global/DomainSteps.class
+com/test/global/testrunner/AllTestNG.class
+com/test/facebook/stepdef/LoginPage.class

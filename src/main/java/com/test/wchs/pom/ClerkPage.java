@@ -1,16 +1,18 @@
 package com.test.wchs.pom;
 
-import java.io.*;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 import com.test.global.support.TestConfig;
 import com.test.global.support.WebUI;
 import io.cucumber.datatable.DataTable;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ClerkPage {
     private final WebUI webUI;

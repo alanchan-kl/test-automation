@@ -15,7 +15,7 @@ public class LoginPage extends DomainSteps {
 
     @Given("I access to facebook webpage")
     public void accessFbPage() {
-        loginPage.navigateUrl();
+        loginPage.navigateUrl("www.facebook.com");
     }
 
     @Given("I enter my email {string} and password {string} on 面子书 and click login")

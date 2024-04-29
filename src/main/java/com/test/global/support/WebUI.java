@@ -16,6 +16,7 @@ import javax.annotation.processing.SupportedSourceVersion;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -109,6 +110,7 @@ public class WebUI {
                 options.setExperimentalOption("prefs", prefs);
             }
             //options.addArguments("start-fullscreen");
+            options.addArguments("--remote-allow-origins=*");
             options.addArguments("--window-size=1512,944");
             options.addArguments("--disable-site-isolation-trials");
             options.setCapability("goog:chromeOptions", options);
@@ -342,6 +344,219 @@ public class WebUI {
     }
 
     /**********Non WebDriver method**********/
+    public String extractToken(String value) throws Throwable {
+        String temp = value;
+        String tokenToState;
+
+        //Extract properties
+        if (temp != null) {
+            if (temp.contains("%")) {
+                String[] array = temp.split("%");
+
+                for (String token : array) {
+                    tokenToState = ((String) state.get(token));
+                    if (tokenToState != null) {
+                        temp = temp.replaceAll("%" + token + "%", tokenToState);
+                    }
+                }
+            } else {
+                temp = (String) state.get(temp);
+            }
+        }
+
+        //ParseInput
+        try {
+            if (temp != null) {
+                temp = parseInput(temp);
+            } else {
+                temp = parseInput(value);
+            }
+        } catch (Exception ex) {
+        }
+
+        return temp;
+    }
+
+    public String parseInput(String arg) throws Throwable {
+        int start = 0;
+        int end = 0;
+        int endLength;//length of the end symbol.
+        boolean foundSyntax;
+        String[] startArr = {"date(", "dateadd(", "if(", "lowercase(", "monthadd(", "replace(", "substring(", "uppercase(", "random(", "unicode("};
+        String temp = arg;
+        String syntaxValue = "";
+        String[] arr;
+
+        for (int i = arg.length() - 1; i > -1; i--) {
+            temp = arg.substring(i);
+            foundSyntax = false;
+
+            for (String syntax : startArr) {
+                if (temp.contains(syntax)) {
+                    foundSyntax = true;
+                    syntaxValue = syntax;
+                }
+            }
+
+            if (foundSyntax) {
+                //Get the value
+                start = 999;
+                int strLength = 0;
+
+                for (String st : startArr) {
+                    if (temp.contains(st)) {
+                        if (temp.indexOf(st) < start) {
+                            strLength = st.length();
+                            start = temp.indexOf(st);
+                        }
+                    }
+                }
+
+                //Searching for the end
+                end = temp.substring(start).indexOf("$)");
+                endLength = 2;
+
+                if (end < 0) {
+                    end = temp.substring(start).indexOf(")");
+                    endLength = 1;
+                }
+
+                arr = temp.substring(start + strLength, start + end).split(",", -1);
+
+                //Perform the action
+                switch (syntaxValue) {
+                    case "date(":
+                        if (arr[0].length() > 0) {
+                            if (arr[0].toLowerCase().trim().equals("today")) {
+                                Calendar cal = Calendar.getInstance();
+                                cal.set(Calendar.HOUR_OF_DAY, 0);
+                                arg = arg.replace(temp.substring(start, end + endLength), new SimpleDateFormat(arr[1]).format(cal.getTime()));
+                            } else {
+                                arg = arg.replace(temp.substring(start, end + endLength), new SimpleDateFormat(arr[2]).format(new SimpleDateFormat(arr[1]).parse(arr[0])));
+                            }
+                        } else {
+                            arg = arg.replace(temp.substring(start, end + endLength), "");
+                        }
+                        break;
+                    case "dateadd(":
+                        if (arr[0].length() > 0) {
+                            Calendar cal = Calendar.getInstance();
+                            // If first param is "today"
+                            if (arr[0].toLowerCase().trim().equals("today")) {
+                                cal.set(Calendar.HOUR_OF_DAY, 0);
+                                cal.add(Calendar.DATE, Integer.parseInt(arr[1]));
+                                arg = arg.replace(temp.substring(start, end + endLength), new SimpleDateFormat(arr[2]).format(cal.getTime()));
+                            } else {
+                                cal.setTime(new SimpleDateFormat(arr[2]).parse(arr[0]));
+                                cal.add(Calendar.DATE, Integer.parseInt(arr[1]));
+                                arg = arg.replace(temp.substring(start, end + endLength), new SimpleDateFormat(arr[3]).format(cal.getTime()));
+                            }
+
+                        } else {
+                            arg = arg.replace(temp.substring(start, end + endLength), "");
+                        }
+                        break;
+                    case "if(":
+                        if (arr[0].equals(arr[1])) {
+                            arg = arg.replace(temp.substring(start, end + endLength), arr[2]);
+                        } else {
+                            arg = arg.replace(temp.substring(start, end + endLength), arr[3]);
+                        }
+                        break;
+                    case "lowercase(":
+                        arg = arg.replace(temp.substring(start, end + endLength), arr[0].toLowerCase());
+                        break;
+                    case "monthadd(":
+                        if (arr[0].length() > 0) {
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(new SimpleDateFormat(arr[2]).parse(arr[0]));
+                            cal.add(Calendar.MONTH, Integer.parseInt(arr[1]));
+                            arg = arg.replace(temp.substring(start, end + endLength), new SimpleDateFormat(arr[3]).format(cal.getTime()));
+                        } else {
+                            arg = arg.replace(temp.substring(start, end + endLength), "");
+                        }
+                        break;
+                    case "replace(":
+                        arg = arg.replace(temp.substring(start, end + endLength), arr[0].replace(arr[1], arr[2]));
+                        break;
+                    case "substring(":
+                        int one;
+                        int two;
+
+                        try {
+                            one = Integer.parseInt(arr[1]);
+                        } catch (Exception Ex) {
+                            one = arr[0].indexOf(arr[1]);
+                        }
+
+                        if (arr.length == 2) {
+                            arg = arg.replace(temp.substring(start, end + endLength), arr[0].substring(one));
+                        } else if (arr.length == 3) {
+                            try {
+                                two = Integer.parseInt(arr[2]);
+                            } catch (Exception Ex) {
+                                two = arr[0].indexOf(arr[2]);
+                            }
+                            arg = arg.replace(temp.substring(start, end + endLength), arr[0].substring(one, two));
+                        }
+                        break;
+                    case "uppercase(":
+                        arg = arg.replace(temp.substring(start, end + endLength), arr[0].toUpperCase());
+                        break;
+                    case "random(":
+                        arg = arg.replace(temp.substring(start, end + endLength), randomizeNumber(Integer.parseInt(arr[0]), Integer.parseInt(arr[1]), Boolean.parseBoolean(arr[2])));
+                        break;
+                    case "unicode(":
+                        arg = arg.replace(temp.substring(start, end + endLength), Character.toString((char) Integer.parseInt(arr[0].substring(2), 16)));
+                        break;
+                }
+
+                //Truncate the string
+                i = arg.length() - 1;
+            }
+        }
+
+        return arg;
+    }
+
+    public String randomizeNumber(int a, int b, boolean enablePadding) {
+        int result = (int) (a + Math.random() * (b - a));
+        String res = Integer.toString(result);
+
+        if (enablePadding) {
+            for (int i = res.length(); i < Integer.toString(b).length(); i++) {
+                res = "0" + res;
+                System.out.println("--------------" + res);
+            }
+        }
+        System.out.println("--------------" + res);
+        return res;
+    }
+
+    public String getStateVariable(String value) {
+        String temp = value;
+        String tokenToState;
+
+        if (temp.contains("%")) {
+            String[] array = temp.split("%");
+            tokenToState = (String) state.get(Thread.currentThread().getId() + "_" + array[1]);
+            try {
+                temp = temp.replaceAll("%" + array[1] + "%", tokenToState);
+            } catch (NullPointerException e) {
+                System.out.println("Nothing is being retrieve");
+            }
+
+            return temp;
+        } else {
+            return value;
+        }
+    }
+
+
+    public void putStateVariable(String key, String value) {
+        this.state.put(Thread.currentThread().getId() + "_" + key, value);
+    }
+
     public void sleep(long ms) throws InterruptedException {
         totalTimeBed += ms;
         Thread.sleep(ms);

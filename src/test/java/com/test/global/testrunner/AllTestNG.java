@@ -8,7 +8,7 @@ import io.cucumber.testng.CucumberOptions;
 
 @Test
 @CucumberOptions(
-        features = {"src/test/resources"},
+        features = {"src/test/resources/"},
         glue = "com.test",
         plugin = {"pretty",
                 "rerun:target/site/rerun.txt",

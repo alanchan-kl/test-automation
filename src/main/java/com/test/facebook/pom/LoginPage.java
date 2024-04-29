@@ -12,7 +12,7 @@ public class LoginPage {
 
     By inputEmail = By.xpath("//input[@id='email']");
     By inputPassword = By.xpath("//input[@id='pass']");
-    By btnLogin = By.xpath("//button[text()='Log In']");
+    By btnLogin = By.xpath("//button[text()='Log in']");
     By labelEmailErrorMsg1 = By.xpath("//div[contains(text(),'The email address you entered')]");
     String emailErrorMsg1 = "The email address you entered isn't connected to an account. Find your account and log in.";
 
@@ -20,8 +20,8 @@ public class LoginPage {
         this.webUI = webUI;
     }
 
-    public void navigateUrl() {
-        webUI.navigateURL("https://facebook.com", false);
+    public void navigateUrl(String url) {
+        webUI.navigateURL(url, false);
         webUI.waitForPageLoad();
         webUI.manageTimeout0();
     }

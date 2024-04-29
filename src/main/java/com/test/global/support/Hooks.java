@@ -60,7 +60,7 @@ public class Hooks {
     }
 
     @After
-    public void after(Scenario scenario) throws Throwable {
+    public void after(Scenario scenario) {
         webState.clear();
 
         if (!hasDriver) return;

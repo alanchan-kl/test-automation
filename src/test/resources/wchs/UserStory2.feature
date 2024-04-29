@@ -6,7 +6,7 @@ Feature: User Story 2
   AC1: Upload csv file
   AC2: Check csv file format
   AC3: Validate csv upload successful
-  AC4: Validate upload invalid format of csv file
+  AC4: Validate upload invalid format of csv file (Upload same record)
 
     Given I access to 'http://localhost:9997/login' webpage
     And I access Working Class Hero System as a clerk

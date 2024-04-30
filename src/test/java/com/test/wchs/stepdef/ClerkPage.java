@@ -17,7 +17,7 @@ public class ClerkPage extends DomainSteps {
         clerkPage = new com.test.wchs.pom.ClerkPage(webUI);
     }
 
-    @And("I choose to add hero by upload a csv file")
+    @Given("I choose to add hero by upload a csv file")
     public void setCredentialAndSubmit() {
         clerkPage.selectAction("csv");
     }

@@ -25,8 +25,8 @@ public class SQLHelper {
         String password = "userpassword";
 
         Connection connection = null;
-        Statement statement = null;
-        ResultSet resultSet = null;
+//        Statement statement = null;
+//        ResultSet resultSet = null;
 
         try {
             // Register the JDBC driver
@@ -59,5 +59,22 @@ public class SQLHelper {
         }
 
         return connection;
+    }
+
+    public void deleteWorkingClassHerosRecordByNatid(String natid) throws SQLException {
+        //delete from testdb.working_class_heroes where natid = 'natid-11';
+        Connection conn = getConnection();
+
+        try {
+            Statement statement = conn.createStatement();
+
+            String query = "delete from testdb.working_class_heroes where natid = '" + natid + "';";
+            System.out.println("Deleting record: " + natid);
+            statement.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection(conn);
+        }
     }
 }

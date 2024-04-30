@@ -23,7 +23,7 @@ public class ClerkPage extends DomainSteps {
     }
 
     @And("^I select '(.*)' file and upload into system$")
-    public void createHeroViaCsv(String fileName) throws FileNotFoundException {
+    public void createHeroViaCsv(String fileName) throws FileNotFoundException, InterruptedException {
         clerkPage.uploadCsvFileAndCreate(fileName, true);
     }
 

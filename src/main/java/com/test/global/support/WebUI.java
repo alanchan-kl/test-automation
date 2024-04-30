@@ -8,26 +8,22 @@ import org.openqa.selenium.logging.LogEntries;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
-import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import javax.annotation.processing.SupportedSourceVersion;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class WebUI {
     private WebDriver driver;
     private final WebState state;
+    private Boolean headlessMode;
     private final double pollTimeout;
     private final double pollInterval;
     private WebUI previousDriver = null;
@@ -57,7 +53,8 @@ public class WebUI {
     }
 
     public void initDriver(String type) throws MalformedURLException {
-        boolean headlessMode = false;
+        headlessMode = Boolean.parseBoolean(TestConfig.get("test.auto.driver.chrome.headless"));
+
         String windowSize, uploadDir, downloadDir, headless;
         boolean runRemote = isRemote();
         String remoteHub = TestConfig.get("test.remote.hub");
@@ -332,6 +329,11 @@ public class WebUI {
     }
 
     public byte[] getScreenshot() {
+        if (headlessMode) {
+            int width = Integer.parseInt(((JavascriptExecutor) driver).executeScript("return document.body.parentNode.scrollWidth").toString());
+            int height = Integer.parseInt(((JavascriptExecutor) driver).executeScript("return document.body.parentNode.scrollHeight").toString());
+            driver.manage().window().setSize(new org.openqa.selenium.Dimension(width, height));
+        }
         return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
     }
 

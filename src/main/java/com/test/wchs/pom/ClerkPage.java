@@ -48,7 +48,7 @@ public class ClerkPage {
         }
     }
 
-    public void uploadCsvFileAndCreate(String fileName, Boolean enableSubmit) throws FileNotFoundException {
+    public void uploadCsvFileAndCreate(String fileName, Boolean enableSubmit) throws FileNotFoundException, InterruptedException {
         webUI.waitUntil(Integer.parseInt(TestConfig.get("test.auto.polltimeout")), ExpectedConditions.visibilityOfElementLocated(inputUploadCsv));
 
         File folder = new File(TestConfig.get("test.auto.upload.dir"));
@@ -75,6 +75,7 @@ public class ClerkPage {
 
         if (enableSubmit == true) {
             webUI.findElement(createBtn).click();
+            webUI.sleep(3000);
         }
     }
 

@@ -1,7 +1,7 @@
 @defaultdriver
 Feature: User Story 2
 
-  @TEST1
+  @US2
   Scenario: As the Clerk, I should be able to upload a csv file through the portal so that I can populate the database from a UI.
   AC1: Upload csv file
   AC2: Check csv file format

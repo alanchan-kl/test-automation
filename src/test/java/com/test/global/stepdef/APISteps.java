@@ -41,7 +41,6 @@ public class APISteps extends DomainSteps {
         actualResult = actualResult.replaceAll("<DOUBLE_QUOTES>","\"");
         actualResult = actualResult.replaceAll("<","{");
         actualResult = actualResult.replaceAll(">","}");
-        System.out.println("TEST OUTPUT: "+ requestbody);
         Assert.assertTrue("Response body does not match with expected.", actualResult.matches(requestbody));
     }
 

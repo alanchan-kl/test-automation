@@ -272,6 +272,11 @@ public class WebUI {
         }
     }
 
+    public void refreshPage(){
+        driver.navigate().refresh();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
+    }
+
     public List<WebElement> findElements(By by) {
         return driver.findElements(by);
     }
@@ -346,6 +351,11 @@ public class WebUI {
     }
 
     /**********Non WebDriver method**********/
+    public static String getDownloadpath(){
+        System.out.println("Finding Downloads directory: " + downloadpath);
+        return downloadpath;
+    }
+
     public String extractToken(String value) throws Throwable {
         String temp = value;
         String tokenToState;

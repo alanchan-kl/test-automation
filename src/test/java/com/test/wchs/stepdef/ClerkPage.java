@@ -28,8 +28,8 @@ public class ClerkPage extends DomainSteps {
     }
 
     @And("^I should upload '(.*)' file in '(.*)' directory with the following data$")
-    public void verifyCsvFile(String fileName, String path, DataTable table) throws IOException {
-        clerkPage.verifyCsvFile(path, fileName, table);
+    public void verifyFile(String fileName, String path, DataTable table) throws IOException, InterruptedException {
+        clerkPage.verifyFile(path, fileName, table);
     }
 
     @And("^I should see upload success notification$")

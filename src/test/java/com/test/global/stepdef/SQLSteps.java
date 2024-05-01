@@ -19,7 +19,22 @@ public class SQLSteps extends DomainSteps {
         this.webUI = webUI;
     }
 
-    @Given("^I delete working class hero record with natid '(.*)'$")
+    @Given("^I delete all working class hero records$")
+    public void deleteWorkingClassHeroAllRecords() throws SQLException {
+        sqlHelper.deleteWorkingClassHeroAllRecords();
+    }
+
+    @And("^I delete all file records$")
+    public void deleteFileAllRecords() throws SQLException {
+        sqlHelper.deleteFileAllRecords();
+    }
+
+    @And("^I delete all voucher records$")
+    public void deleteVoucherAllRecords() throws SQLException {
+        sqlHelper.deleteVoucherAllRecords();
+    }
+
+    @And("^I delete working class hero record with natid '(.*)'$")
     public void deleteWorkingClassHeroRecordByNatid(String natid) throws SQLException {
         sqlHelper.deleteWorkingClassHeroRecordByNatid(natid);
     }

@@ -18,8 +18,12 @@ public class LoginPage extends DomainSteps {
         loginPage.navigateUrl(url);
     }
 
-    @When("I access Working Class Hero System as a clerk")
-    public void setCredentialAndSubmit() throws Exception {
-        loginPage.setCredentialAndSubmit("clerk", "clerk");
+    @When("I access Working Class Hero System as a (clerk|book keeper)$")
+    public void setCredentialAndSubmit(String role) throws Exception {
+        if(role.equals("clerk")){
+            loginPage.setCredentialAndSubmit("clerk", "clerk");
+        } else if(role.equals("book keeper")) {
+            loginPage.setCredentialAndSubmit("bk", "bk");
+        }
     }
 }

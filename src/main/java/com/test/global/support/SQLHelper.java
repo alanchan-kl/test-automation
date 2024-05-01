@@ -67,6 +67,54 @@ public class SQLHelper {
         return connection;
     }
 
+    public void deleteWorkingClassHeroAllRecords() throws SQLException {
+        Connection conn = getConnection();
+
+        try {
+            Statement statement = conn.createStatement();
+
+            String query = "delete from testdb.working_class_heroes;";
+            System.out.println("Deleting all working class hero records... ");
+            statement.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection(conn);
+        }
+    }
+
+    public void deleteVoucherAllRecords() throws SQLException {
+        Connection conn = getConnection();
+
+        try {
+            Statement statement = conn.createStatement();
+
+            String query = "delete from testdb.vouchers;";
+            System.out.println("Deleting all vouchers records... ");
+            statement.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection(conn);
+        }
+    }
+
+    public void deleteFileAllRecords() throws SQLException {
+        Connection conn = getConnection();
+
+        try {
+            Statement statement = conn.createStatement();
+
+            String query = "delete from testdb.file;";
+            System.out.println("Deleting all file records... ");
+            statement.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection(conn);
+        }
+    }
+
     public void deleteWorkingClassHeroRecordByNatid(String natid) throws SQLException {
         Connection conn = getConnection();
 

@@ -79,7 +79,11 @@ public class ClerkPage {
         }
     }
 
-    public void verifyCsvFile(String path, String fileName, DataTable table) throws IOException {
+    public void verifyFile(String path, String fileName, DataTable table) throws IOException, InterruptedException {
+        if (path.equals("downloads")) {
+            path = webUI.getDownloadpath();
+        }
+
         List<List<String>> expectedList = table.asLists(String.class);
         List<String> expectedListResult = new ArrayList<>();
 
@@ -100,22 +104,35 @@ public class ClerkPage {
 
         FileReader fr = null;
 
-        File folder = new File(path);
-        File[] listOfFiles = folder.listFiles();
-        if (listOfFiles == null)
-            throw new NullPointerException("Unable to find directory: " + path);
-
+        int retries = 0;
         boolean isFileFound = false;
-        for (File listOfFile : listOfFiles) {
-            if (!listOfFile.isDirectory()) {
-                if (listOfFile.isFile()) {
-                    if (listOfFile.getName().equalsIgnoreCase(fileName)) {
-                        isFileFound = true;
-                        System.out.println("Reading file: " + listOfFile.getAbsolutePath());
-                        fr = new FileReader(listOfFile.getAbsolutePath());
+        while (isFileFound == false) {
+            if (retries >= 5) {
+                Assert.fail("No file was found in the directory after 5 retries.");
+                break;
+            }
+
+            File folder = new File(path);
+            File[] listOfFiles = folder.listFiles();
+            if (listOfFiles == null)
+                throw new NullPointerException("Unable to find directory: " + path);
+
+            for (File listOfFile : listOfFiles) {
+                if (!listOfFile.isDirectory()) {
+                    if (listOfFile.isFile()) {
+                        if (listOfFile.getName().equalsIgnoreCase(fileName)) {
+                            isFileFound = true;
+                            System.out.println("Reading file: " + listOfFile.getAbsolutePath());
+                            fr = new FileReader(listOfFile.getAbsolutePath());
+                        }
                     }
                 }
             }
+
+            if (retries > 0) {
+                Thread.sleep(5000);
+            }
+            retries++;
         }
 
         if (!isFileFound) {
@@ -135,10 +152,10 @@ public class ClerkPage {
         List<String> actualListResult = actualTable.stream().flatMap(Collection::stream).collect(Collectors.toList());
         br.close();
 
-        Assert.assertEquals("CSV does not match with expected. ", expectedListResult, actualListResult);
+        Assert.assertEquals("File contents does not match with expected. ", expectedListResult, actualListResult);
     }
 
-    public void verifyNotificationMsg(String expectedMessage){
+    public void verifyNotificationMsg(String expectedMessage) {
         webUI.waitUntil(Integer.parseInt(TestConfig.get("test.auto.polltimeout")), ExpectedConditions.visibilityOfElementLocated(labelNotification));
         String getText = webUI.findElement(labelNotification).getText();
         System.out.println("Expected Text: " + expectedMessage);

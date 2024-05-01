@@ -4,7 +4,9 @@ import com.test.global.DomainSteps;
 import com.test.global.support.APIHelper;
 import com.test.global.support.WebState;
 import com.test.global.support.WebUI;
-import io.cucumber.java.en.*;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import org.json.JSONObject;
 import org.junit.Assert;
 
 public class APISteps extends DomainSteps {
@@ -22,8 +24,19 @@ public class APISteps extends DomainSteps {
         apiHelper.sendRespondData(endPoint, fileName);
     }
 
-    @And("^I should see '(.*)' response code$")
+    @And("^System should return '(.*)' response code$")
     public void verifyStatusCode(String statusCode) {
         Assert.assertEquals("Response code does not match with expected. ", statusCode, webUI.getStateVariable("%responseCode%"));
+    }
+
+    @And("^System should return '(.*)' as '(.*)'$")
+    public void verifyResponseBody(String responsebody, String expected){
+        String getResult = webUI.getStateVariable("%responseBody%");
+        getResult = getResult.replaceAll("<COMMA>",",");
+        getResult = getResult.replaceAll("<DOUBLE_QUOTES>","\"");
+        getResult = getResult.replaceAll("<","{");
+        getResult = getResult.replaceAll(">","}");
+        JSONObject jsonObject = new JSONObject(getResult);
+        Assert.assertEquals("Response code does not match with expected. ", expected, jsonObject.get(responsebody));
     }
 }

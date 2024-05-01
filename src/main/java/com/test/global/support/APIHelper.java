@@ -3,12 +3,18 @@ package com.test.global.support;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.TimeZone;
 
 public class APIHelper {
     private static WebUI webUI = null;
 
     public APIHelper(WebUI webUI) {
-        this.webUI = webUI;
+        APIHelper.webUI = webUI;
     }
 
     private static String readJsonFromFile(String fileName) throws IOException {
@@ -38,7 +44,7 @@ public class APIHelper {
         }
 
         if (!isFileFound) {
-            throw new FileNotFoundException(String.format("Error in reading file: ") + fileName);
+            throw new FileNotFoundException("Error in reading file: "+ fileName);
         }
 
         return stringBuilder.toString();
@@ -53,10 +59,32 @@ public class APIHelper {
             connection.setDoOutput(true);
 
             String requestBody = readJsonFromFile(fileName);
+            DateFormat dtFormat = new SimpleDateFormat("yyyy-MM-dd'T'00:00:00");
+            TimeZone tz = TimeZone.getTimeZone("Asia/Singapore");
+            dtFormat.setTimeZone(tz);
+
+            if (requestBody.contains("<today_date>")) {
+                Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("Asia/Singapore"));
+                requestBody = requestBody.replace("<today_date>", dtFormat.format(calendar.getTime()));
+            }
+
+            if (requestBody.contains("<today+1_date>")) {
+                Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("Asia/Singapore"));
+                calendar.add(Calendar.DATE, 1);
+                requestBody = requestBody.replace("<today+1_date>", dtFormat.format(calendar.getTime()));
+            }
+
+            if (requestBody.contains("<today+30_date>")) {
+                Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("Asia/Singapore"));
+                calendar.add(Calendar.DATE, 30);
+                requestBody = requestBody.replace("<today+30_date>", dtFormat.format(calendar.getTime()));
+            }
+
+            System.out.println("Request Body: " + requestBody);
 
             // Write JSON data to the connection's output stream
             try (OutputStream outputStream = connection.getOutputStream()) {
-                byte[] input = requestBody.getBytes("utf-8");
+                byte[] input = requestBody.getBytes(StandardCharsets.UTF_8);
                 outputStream.write(input, 0, input.length);
             }
 
@@ -81,7 +109,12 @@ public class APIHelper {
             reader.close();
 
             System.out.println("Response Body: " + responseBody);
-            webUI.putStateVariable("responseBody", String.valueOf(responseBody));
+            String getResult =  String.valueOf(responseBody);
+            getResult = getResult.replaceAll("\\{","<");
+            getResult = getResult.replaceAll("\\}",">");
+            getResult = getResult.replaceAll(",","<COMMA>");
+            getResult = getResult.replaceAll("\"","<DOUBLE_QUOTES>");
+            webUI.putStateVariable("responseBody", getResult);
             connection.disconnect();
 
         } catch (IOException e) {

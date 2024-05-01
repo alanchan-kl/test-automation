@@ -1,0 +1,10 @@
+{
+  "natid": "natid-0",
+  "name": "A",
+  "gender": "MALE",
+  "birthDate": "<today_date>",
+  "deathDate": "<today+30_date>",
+  "browniePoints": "0",
+  "salary": "0",
+  "taxPaid": "0"
+}

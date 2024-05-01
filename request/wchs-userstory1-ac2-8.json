@@ -1,0 +1,10 @@
+{
+  "natid": "natid-18",
+  "name": "Working class hero",
+  "gender": "FEMALE",
+  "birthDate": "<today_date>",
+  "deathDate": null,
+  "browniePoints": null,
+  "salary": "1.0",
+  "taxPaid": "-1"
+}

@@ -5,7 +5,6 @@ Feature: User Story 5
   Scenario: As the system owner, I want to have an API that hits an external service’s API to find out if a working class hero owes money
   AC1: GET request /api/v1/hero/owe-money with query parameter natid=<number>
   AC2: The natid value should only accept numeric values.
-  ## not sure how to produce status NIL
   AC3: The system should receive a response with the payload format like:
   {
   "data": "natid-<number>",
@@ -17,6 +16,7 @@ Feature: User Story 5
   "data": "natid-<number>",
   "status": "OWE"
   }
+  ## not sure how to produce status NIL
 
     Given I send an external service request with '/api/v1/hero/owe-money?natid=1' endpoint to get owe money status
     Then System should return '200' response code

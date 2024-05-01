@@ -19,9 +19,14 @@ public class APISteps extends DomainSteps {
         this.webUI = webUI;
     }
 
+    @Given("^I send an external service request with '(.*)' endpoint to get owe money status$")
+    public void sendGetRespondData(String endPoint) {
+        apiHelper.sendGetRespondData(endPoint);
+    }
+
     @Given("^I add working hero with '(.*)' file by calling '(.*)' endpoint$")
-    public void setCredentialAndSubmit(String fileName, String endPoint) {
-        apiHelper.sendRespondData(endPoint, fileName);
+    public void sendPostRespondData(String fileName, String endPoint) {
+        apiHelper.sendPostRespondData(endPoint, fileName);
     }
 
     @And("^System should return '(.*)' response code$")
@@ -29,14 +34,25 @@ public class APISteps extends DomainSteps {
         Assert.assertEquals("Response code does not match with expected. ", statusCode, webUI.getStateVariable("%responseCode%"));
     }
 
+    @And("^System should return '(.*)' response body$")
+    public void verifyRequestBody(String requestbody) {
+        String actualResult = webUI.getStateVariable("%responseBody%");
+        actualResult = actualResult.replaceAll("<COMMA>",",");
+        actualResult = actualResult.replaceAll("<DOUBLE_QUOTES>","\"");
+        actualResult = actualResult.replaceAll("<","{");
+        actualResult = actualResult.replaceAll(">","}");
+        System.out.println("TEST OUTPUT: "+ requestbody);
+        Assert.assertTrue("Response body does not match with expected.", actualResult.matches(requestbody));
+    }
+
     @And("^System should return '(.*)' as '(.*)'$")
     public void verifyResponseBody(String responsebody, String expected){
-        String getResult = webUI.getStateVariable("%responseBody%");
-        getResult = getResult.replaceAll("<COMMA>",",");
-        getResult = getResult.replaceAll("<DOUBLE_QUOTES>","\"");
-        getResult = getResult.replaceAll("<","{");
-        getResult = getResult.replaceAll(">","}");
-        JSONObject jsonObject = new JSONObject(getResult);
+        String actualResult = webUI.getStateVariable("%responseBody%");
+        actualResult = actualResult.replaceAll("<COMMA>",",");
+        actualResult = actualResult.replaceAll("<DOUBLE_QUOTES>","\"");
+        actualResult = actualResult.replaceAll("<","{");
+        actualResult = actualResult.replaceAll(">","}");
+        JSONObject jsonObject = new JSONObject(actualResult);
         Assert.assertEquals("Response code does not match with expected. ", expected, jsonObject.get(responsebody));
     }
 }

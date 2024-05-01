@@ -1,0 +1,16 @@
+{
+  "natid": "natid-49",
+  "name": "Voucher Test",
+  "gender": "FEMALE",
+  "birthDate": "1961-04-08T00:00:00",
+  "deathDate": null,
+  "browniePoints": null,
+  "salary": "10000.0",
+  "taxPaid": "2000.0",
+  "vouchers": [
+    {
+      "voucherName": null,
+      "voucherType": "TRAVEL"
+    }
+  ]
+}

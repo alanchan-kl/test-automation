@@ -35,7 +35,7 @@ Feature: User Story 4
 
     Examples:
       | fileName                   | natid    | name                                                                                                 | gender | birth_date          | death_date      | brownie_points | salary  | tax_paid |
-      ## BUG?? Hit 500 Internal Server Error when input death_date (UI&API)
+      ## BUG Hit 500 Internal Server Error when input death_date (UI&API)
       ##java.util.regex.PatternSyntaxException: Unmatched closing ')' near index 58
       ##^([0-9]{4}-[0-9]{2}-[0-9]{2})(T[0-9]{2}:[0-9]{2}:[0-9]{2})?)*$
       | wchs-userstory4-ac2-1.json | natid-0  | A                                                                                                    | MALE   | <today_date>        | <today+30_date> | 0              | 0.0     | 0.0      |
@@ -58,13 +58,16 @@ Feature: User Story 4
       | null | null |
 
     Examples:
-      | fileName                   | natid          | errorMsg                                      |
-      ##BUG
-      | wchs-userstory4-ac2-3.json | natid-10000000 | Invalid natid                                 |
-      ##BUG
-      | wchs-userstory4-ac2-4.json | natid-44       | Name must be between 1 and 100 characters     |
-      | wchs-userstory4-ac2-5.json | natid-45       | Invalid gender                                |
-      | wchs-userstory4-ac2-6.json | natid-46       | There are some issues with working class hero |
-      | wchs-userstory4-ac2-7.json | natid-47       | Salary must be greater than or equals to zero |
+      | fileName                    | natid          | errorMsg                                      |
+      ##BUG - able to create record, should return error based on US1
+      | wchs-userstory4-ac2-3.json  | natid-10000000 | Invalid natid                                 |
+      ##BUG - able to create record, should return error based on US1
+      | wchs-userstory4-ac2-4.json  | natid-44       | Name must be between 1 and 100 characters     |
+      | wchs-userstory4-ac2-5.json  | natid-45       | Invalid gender                                |
+      | wchs-userstory4-ac2-6.json  | natid-46       | There are some issues with working class hero |
+      | wchs-userstory4-ac2-7.json  | natid-47       | Salary must be greater than or equals to zero |
       ## description never mention taxPaid
-      | wchs-userstory4-ac2-8.json | natid-48       | must be greater than or equal to 0            |
+      | wchs-userstory4-ac2-8.json  | natid-48       | must be greater than or equal to 0            |
+      | wchs-userstory4-ac2-9.json  | natid-49       | vouchers cannot be null or empty              |
+      | wchs-userstory4-ac2-10.json | natid-50       | Voucher Name cannot be blank                  |
+      ## system never check on voucherType empty, will hit error when call by-person-and-type

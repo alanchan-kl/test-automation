@@ -41,7 +41,7 @@ Feature: User Story 1
 
     Examples:
       | fileName                   | natid    | name                                                                                                 | gender | birth_date          | death_date      | brownie_points | salary  | tax_paid |
-      ## BUG?? Hit 500 Internal Server Error when input death_date (UI&API)
+      ## BUG Hit 500 Internal Server Error when input death_date (UI&API)
       ##java.util.regex.PatternSyntaxException: Unmatched closing ')' near index 58
       ##^([0-9]{4}-[0-9]{2}-[0-9]{2})(T[0-9]{2}:[0-9]{2}:[0-9]{2})?)*$
       | wchs-userstory1-ac2-1.json | natid-0  | A                                                                                                    | MALE   | <today_date>        | <today+30_date> | 0              | 0.0     | 0.0      |

@@ -18,7 +18,7 @@ public class ClerkPage extends DomainSteps {
     }
 
     @Given("I choose to add hero by upload a csv file")
-    public void setCredentialAndSubmit() {
+    public void selectAction() {
         clerkPage.selectAction("csv");
     }
 

@@ -50,7 +50,49 @@ public class APIHelper {
         return stringBuilder.toString();
     }
 
-    public static void sendRespondData(String endPoint, String fileName) {
+    public static void sendGetRespondData(String endPoint) {
+        try {
+            URL url = new URL("http://localhost:9997" + endPoint);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setDoOutput(true);
+
+            // Get response code
+            int responseCode = connection.getResponseCode();
+            System.out.println("Response Code: " + responseCode);
+            webUI.putStateVariable("responseCode", String.valueOf(responseCode));
+
+            // Read response body
+            BufferedReader reader;
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            } else {
+                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+            }
+
+            StringBuilder responseBody = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                responseBody.append(line);
+            }
+            reader.close();
+
+            System.out.println("Response Body: " + responseBody);
+            String getResult =  String.valueOf(responseBody);
+            getResult = getResult.replaceAll("\\{","<");
+            getResult = getResult.replaceAll("\\}",">");
+            getResult = getResult.replaceAll(",","<COMMA>");
+            getResult = getResult.replaceAll("\"","<DOUBLE_QUOTES>");
+            webUI.putStateVariable("responseBody", getResult);
+            connection.disconnect();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void sendPostRespondData(String endPoint, String fileName) {
         try {
             URL url = new URL("http://localhost:9997" + endPoint);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();

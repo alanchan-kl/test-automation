@@ -53,4 +53,9 @@ public class SQLSteps extends DomainSteps {
     public void verifyVoucherByNatid(String natid, DataTable table) throws Throwable {
         sqlHelper.selectRecord("select name, voucher_type from testdb.vouchers where working_class_hero_id = (select id from testdb.working_class_heroes where natid = '" + natid + "');", table);
     }
+
+    @And("^the file table should be expected based on file path '(.*)'$")
+    public void verifyFileByFilepath(String partialFilename, DataTable table) throws Throwable {
+        sqlHelper.selectRecord("select file_status, total_count from testdb.file where file_path like '%" + partialFilename + "%';", table);
+    }
 }

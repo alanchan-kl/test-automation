@@ -1,7 +1,7 @@
-@defaultdriver
+@defaultdriver @US3
 Feature: User Story 3
 
-  @US3_AC1
+  @US3_AC1 @US3_AC2 @US3_AC3 @US3_AC4
   Scenario: As the Book Keeper, I should be able to generate a Tax Relief Egress File from the UI
   AC1: When I Iogin as a Book Keeper, I should be able to generate a tax relief egress file taxrelief.txt
   by clicking the Generate Tax Relief File button
@@ -15,6 +15,7 @@ Feature: User Story 3
   or ERROR otherwise
   ## not sure where to verify the <tax relief amount>
   ## FILE status stuck at 'NEW', not sure how to verify 'COMPLETED' and 'ERROR'
+  ## FILE total_count always shows 0
   ## Generate button disabled after refresh, and click generate multiples times
   ## Test has to run first due to check no records
 
@@ -31,9 +32,12 @@ Feature: User Story 3
     And I delete all file records
     And I refresh current page
     When I generate tax relief file
-    Then I should upload 'tax_relief_file (1).txt' file in 'downloads' directory with the following data
+    Then I should upload 'tax_relief_file.txt' file in 'downloads' directory with the following data
       | natid-12 | 7.2 |
       | 1        |     |
+    And the file table should be expected based on file path 'alanchan'
+      | file_status | total_count |
+      | NEW         | 0           |
 
 
 

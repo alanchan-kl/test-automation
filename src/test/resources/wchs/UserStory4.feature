@@ -1,4 +1,4 @@
-@defaultdriver
+@defaultdriver @US4
 Feature: User Story 4
 
   @US4_AC1 @US4_AC4

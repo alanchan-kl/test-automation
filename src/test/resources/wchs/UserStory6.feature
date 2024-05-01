@@ -1,4 +1,4 @@
-@defaultdriver
+@defaultdriver @US6
 Feature: User Story 6
 
   @US6_AC1

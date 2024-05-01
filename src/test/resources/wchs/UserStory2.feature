@@ -8,7 +8,7 @@ Feature: User Story 2
   AC3: Validate csv upload successful
   AC4: Validate upload invalid format of csv file (Upload same record)
 
-    Given I delete working class heros record with natid 'natid-11'
+    Given I delete working class hero record with natid 'natid-11'
     And I access to 'http://localhost:9997/login' webpage
     And I access Working Class Hero System as a clerk
     When I choose to add hero by upload a csv file

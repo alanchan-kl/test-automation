@@ -19,13 +19,23 @@ public class SQLSteps extends DomainSteps {
         this.webUI = webUI;
     }
 
-    @Given("^I delete working class heros record with natid '(.*)'$")
-    public void deleteWorkingClassHerosRecordByNatid(String natid) throws SQLException {
-        sqlHelper.deleteWorkingClassHerosRecordByNatid(natid);
+    @Given("^I delete working class hero record with natid '(.*)'$")
+    public void deleteWorkingClassHeroRecordByNatid(String natid) throws SQLException {
+        sqlHelper.deleteWorkingClassHeroRecordByNatid(natid);
+    }
+
+    @And("^I delete voucher record with natid '(.*)'$")
+    public void deleteVoucherRecordByNatid(String natid) throws Throwable {
+        sqlHelper.deleteVoucherByNatid(natid);
     }
 
     @And("^the working class heros table should be expected based on natid '(.*)'$")
-    public void setCredentialAndSubmit(String natid, DataTable table) throws Throwable {
+    public void verifyWorkingClassHeroRecordByNatid(String natid, DataTable table) throws Throwable {
         sqlHelper.selectRecord("select natid, name, gender, DATE_FORMAT(birth_date, '%Y-%m-%dT%H:%i:%s') as birth_date, DATE_FORMAT(death_date, '%Y-%m-%dT%H:%i:%s') as death_date, brownie_points, salary, tax_paid from testdb.working_class_heroes where natid = '" + natid + "';", table);
+    }
+
+    @And("^the vouchers table should be expected based on natid '(.*)'$")
+    public void verifyVoucherByNatid(String natid, DataTable table) throws Throwable {
+        sqlHelper.selectRecord("select name, voucher_type from testdb.vouchers where working_class_hero_id = (select id from testdb.working_class_heroes where natid = '" + natid + "');", table);
     }
 }

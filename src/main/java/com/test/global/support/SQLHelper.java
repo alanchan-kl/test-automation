@@ -67,14 +67,30 @@ public class SQLHelper {
         return connection;
     }
 
-    public void deleteWorkingClassHerosRecordByNatid(String natid) throws SQLException {
+    public void deleteWorkingClassHeroRecordByNatid(String natid) throws SQLException {
         Connection conn = getConnection();
 
         try {
             Statement statement = conn.createStatement();
 
             String query = "delete from testdb.working_class_heroes where natid = '" + natid + "';";
-            System.out.println("Deleting record: " + natid);
+            System.out.println("Deleting working class hero record: " + natid);
+            statement.execute(query);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConnection(conn);
+        }
+    }
+
+    public void deleteVoucherByNatid(String natid) throws SQLException {
+        Connection conn = getConnection();
+
+        try {
+            Statement statement = conn.createStatement();
+
+            String query = "delete from testdb.vouchers where working_class_hero_id = (select id from testdb.working_class_heroes where natid = '" + natid + "');";
+            System.out.println("Deleting voucher record: " + natid);
             statement.execute(query);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -98,7 +114,7 @@ public class SQLHelper {
             errMsg = "";
             ResultSet rs = stmt.executeQuery(statement.replaceAll(";", ""));
             expectedTable = dataTable.asLists();
-            System.out.println(expectedTable);
+            System.out.println("Expected table: " + expectedTable);
 
             for (int i = 1; i < expectedTable.size(); i++) {
                 if (rs.next()) {

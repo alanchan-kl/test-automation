@@ -1,0 +1,16 @@
+{
+  "natid": "natid-46",
+  "name": "A",
+  "gender": "MALE",
+  "birthDate": "<today+1_date>",
+  "deathDate": null,
+  "browniePoints": "0",
+  "salary": "0",
+  "taxPaid": "0",
+  "vouchers": [
+    {
+      "voucherName": "VOUCHER 1",
+      "voucherType": "TRAVEL"
+    }
+  ]
+}

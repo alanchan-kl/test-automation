@@ -61,7 +61,8 @@ Feature: User Story 1
   7. taxPaid is a decimal and cannot be negative
   8. browniePoints and deathDate are nullable
 
-    Given I delete working class hero record with natid '<natid>'
+    Given I delete voucher record with natid '<natid>'
+    And I delete working class hero record with natid '<natid>'
     When I add working hero with '<fileName>' file by calling '/api/v1/hero' endpoint
     Then System should return '400' response code
     And System should return 'errorMsg' as '<errorMsg>'

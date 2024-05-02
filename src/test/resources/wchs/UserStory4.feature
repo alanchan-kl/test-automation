@@ -41,7 +41,7 @@ Feature: User Story 4
       | wchs-userstory4-ac2-1.json | natid-0  | A                                                                                                    | MALE   | <today_date>        | <today+30_date> | 0              | 0.0     | 0.0      |
       | wchs-userstory4-ac2-2.json | natid-42 | Lorem ipsum dolor sit amete consectetuer adipiscing elite Aenean commodo ligula eget dolore Aenean m | FEMALE | 1961-04-08T00:00:00 | null            | null           | 10000.0 | 2000.0   |
 
-  @US1_AC2 @US4_AC3 @US4_AC5
+  @US4_AC2 @US4_AC3 @US4_AC5
   Scenario Outline: As the system owner, I want to provide an API that creates a working class hero with vouchers. (Negative flow)
   AC2: Field validation are the same as User Story 1
   AC3: If vouchers is null or empty, the working class hero cannot be created

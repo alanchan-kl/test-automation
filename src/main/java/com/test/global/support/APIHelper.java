@@ -7,7 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 public class APIHelper {
@@ -44,7 +43,7 @@ public class APIHelper {
         }
 
         if (!isFileFound) {
-            throw new FileNotFoundException("Error in reading file: "+ fileName);
+            throw new FileNotFoundException("Error in reading file: " + fileName);
         }
 
         return stringBuilder.toString();
@@ -79,17 +78,29 @@ public class APIHelper {
             reader.close();
 
             System.out.println("Response Body: " + responseBody);
-            String getResult =  String.valueOf(responseBody);
-            getResult = getResult.replaceAll("\\{","<");
-            getResult = getResult.replaceAll("\\}",">");
-            getResult = getResult.replaceAll(",","<COMMA>");
-            getResult = getResult.replaceAll("\"","<DOUBLE_QUOTES>");
+            String getResult = String.valueOf(responseBody);
+            getResult = getResult.replaceAll("\\{", "<");
+            getResult = getResult.replaceAll("\\}", ">");
+            getResult = getResult.replaceAll(",", "<COMMA>");
+            getResult = getResult.replaceAll("\"", "<DOUBLE_QUOTES>");
             webUI.putStateVariable("responseBody", getResult);
             connection.disconnect();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static final ThreadLocal<DateFormat> dateFormatThreadLocal = ThreadLocal.withInitial(() -> {
+        DateFormat dtFormat = new SimpleDateFormat("yyyy-MM-dd'T'00:00:00");
+        dtFormat.setTimeZone(TimeZone.getTimeZone("Asia/Singapore"));
+        return dtFormat;
+    });
+
+    private static String replaceDatePlaceholder(String requestBody, String placeholder, int daysToAdd) {
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Singapore"));
+        calendar.add(Calendar.DATE, daysToAdd);
+        return requestBody.replace(placeholder, dateFormatThreadLocal.get().format(calendar.getTime()));
     }
 
     public static void sendPostRespondData(String endPoint, String fileName) {
@@ -101,62 +112,57 @@ public class APIHelper {
             connection.setDoOutput(true);
 
             String requestBody = readJsonFromFile(fileName);
-            DateFormat dtFormat = new SimpleDateFormat("yyyy-MM-dd'T'00:00:00");
-            TimeZone tz = TimeZone.getTimeZone("Asia/Singapore");
-            dtFormat.setTimeZone(tz);
 
             if (requestBody.contains("<today_date>")) {
-                Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("Asia/Singapore"));
-                requestBody = requestBody.replace("<today_date>", dtFormat.format(calendar.getTime()));
+                requestBody = replaceDatePlaceholder(requestBody, "<today_date>", 0);
             }
 
             if (requestBody.contains("<today+1_date>")) {
-                Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("Asia/Singapore"));
-                calendar.add(Calendar.DATE, 1);
-                requestBody = requestBody.replace("<today+1_date>", dtFormat.format(calendar.getTime()));
+                requestBody = replaceDatePlaceholder(requestBody, "<today+1_date>", 1);
             }
 
             if (requestBody.contains("<today+30_date>")) {
-                Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("Asia/Singapore"));
-                calendar.add(Calendar.DATE, 30);
-                requestBody = requestBody.replace("<today+30_date>", dtFormat.format(calendar.getTime()));
+                requestBody = replaceDatePlaceholder(requestBody, "<today+30_date>", 30);
             }
 
             System.out.println("Request Body: " + requestBody);
 
-            // Write JSON data to the connection's output stream
-            try (OutputStream outputStream = connection.getOutputStream()) {
-                byte[] input = requestBody.getBytes(StandardCharsets.UTF_8);
-                outputStream.write(input, 0, input.length);
+            synchronized (APIHelper.class) {
+                // Write JSON data to the connection's output stream
+                try (OutputStream outputStream = connection.getOutputStream()) {
+                    byte[] input = requestBody.getBytes(StandardCharsets.UTF_8);
+                    outputStream.write(input, 0, input.length);
+                }
+
+                // Get response code
+                int responseCode = connection.getResponseCode();
+                System.out.println("Response Code: " + responseCode);
+                webUI.putStateVariable("responseCode", String.valueOf(responseCode));
+
+                // Read response body
+                BufferedReader reader;
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                } else {
+                    reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                }
+
+                StringBuilder responseBody = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    responseBody.append(line);
+                }
+                reader.close();
+
+                System.out.println("Response Body: " + responseBody);
+                String getResult = String.valueOf(responseBody);
+                getResult = getResult.replaceAll("\\{", "<");
+                getResult = getResult.replaceAll("\\}", ">");
+                getResult = getResult.replaceAll(",", "<COMMA>");
+                getResult = getResult.replaceAll("\"", "<DOUBLE_QUOTES>");
+                webUI.putStateVariable("responseBody", getResult);
             }
 
-            // Get response code
-            int responseCode = connection.getResponseCode();
-            System.out.println("Response Code: " + responseCode);
-            webUI.putStateVariable("responseCode", String.valueOf(responseCode));
-
-            // Read response body
-            BufferedReader reader;
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            } else {
-                reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-            }
-
-            StringBuilder responseBody = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                responseBody.append(line);
-            }
-            reader.close();
-
-            System.out.println("Response Body: " + responseBody);
-            String getResult =  String.valueOf(responseBody);
-            getResult = getResult.replaceAll("\\{","<");
-            getResult = getResult.replaceAll("\\}",">");
-            getResult = getResult.replaceAll(",","<COMMA>");
-            getResult = getResult.replaceAll("\"","<DOUBLE_QUOTES>");
-            webUI.putStateVariable("responseBody", getResult);
             connection.disconnect();
 
         } catch (IOException e) {

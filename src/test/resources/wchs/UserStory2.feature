@@ -16,7 +16,9 @@ Feature: User Story 2
       | natid-11 | Hero A | MALE | 2000-04-08T00:00:00 | <blank> | 10 | 1 | 1 |
     When I select 'wchs-userstory2-valid.csv' file and upload into system
     Then I should see upload success notification
+    And the working class heros table should be expected based on natid '<natid>'
+      | natid-11 | Hero A | MALE   | 2000-04-08T00:00:00 | <blank>    | <10            | 1.0    | 1.0      |
     When I select 'wchs-userstory2-valid.csv' file and upload into system
     Then I should see upload error notification
-
+    ### count record make sure not insert
 

@@ -15,7 +15,7 @@ Feature: User Story 1
     Then System should return '400' response code
     And System should return 'errorMsg' as 'Working Class Hero of natid: natid-12 already exists!'
     And the working class heros table should be expected based on natid 'natid-12'
-      | natid    | name     | gender | birth_date          | death_date | brownie_points | salary | tax_paid |
+      #| natid    | name     | gender | birth_date          | death_date | brownie_points | salary | tax_paid |
       | natid-12 | API test | MALE   | 2000-04-08T00:00:00 | null       | 1              | 10.0   | 1.0      |
 
   @US1_AC2

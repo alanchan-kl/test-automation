@@ -347,7 +347,7 @@ public class WebUI {
     }
 
     public void quit() {
-        driver.quit();
+        //driver.quit();
     }
 
     /**********Non WebDriver method**********/

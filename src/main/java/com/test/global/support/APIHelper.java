@@ -26,17 +26,13 @@ public class APIHelper {
 
         boolean isFileFound = false;
         for (File listOfFile : listOfFiles) {
-            if (!listOfFile.isDirectory()) {
-                if (listOfFile.isFile()) {
-                    if (listOfFile.getName().equalsIgnoreCase(fileName)) {
-                        isFileFound = true;
-                        System.out.println("Reading json file: " + listOfFile.getAbsolutePath());
-                        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(listOfFile.getAbsolutePath()))) {
-                            String line;
-                            while ((line = bufferedReader.readLine()) != null) {
-                                stringBuilder.append(line);
-                            }
-                        }
+            if (listOfFile.getName().equalsIgnoreCase(fileName)) {
+                isFileFound = true;
+                System.out.println("Reading json file: " + listOfFile.getAbsolutePath());
+                try (BufferedReader bufferedReader = new BufferedReader(new FileReader(listOfFile.getAbsolutePath()))) {
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        stringBuilder.append(line);
                     }
                 }
             }
